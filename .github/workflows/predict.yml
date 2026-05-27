@@ -87,7 +87,7 @@ jobs:
           commit_message: "chore(data): update db & charts before notify"
           file_pattern: |
             data/img/*.png
-            data/*.db
+            data/daletou.db
             data/lstm_state.pt
             data/lstm_meta.json
             data/transformer_state.pt
