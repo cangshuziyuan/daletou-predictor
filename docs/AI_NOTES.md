@@ -44,6 +44,12 @@ sed -n '1,80p' docs/AI_NOTES.md
 **真相**：这个 repo 历史上 `predict.yml` schedule 触发次数 = 0，`evaluate.yml` = 1。是 GitHub 的问题，不是代码。
 **做法**：所有调度都靠事件链 + heartbeat，不要再"修" cron 时间。
 
+### ❌ 误判 5：「meta.json 显示最新期号 = DB 在 git 里也是最新的」
+
+**真相**：predict/evaluate workflow 每次运行时 fetch_history 更新 DB，生成 meta.json，但 DB 没有被 commit 进 git（glob `data/*.db` 在 git-auto-commit-action@v5 里被静默忽略）。
+**已修复**：2026-05-27 把 `data/*.db` 改为 `data/daletou.db`（direct path）。如果再次看到 meta.json 里期号远超 `git log -- data/daletou.db` 最后修改时间，说明 DB commit 又挂了。
+**检查命令**：`git log --oneline -3 -- data/daletou.db`，看最后一次修改时间是否合理。
+
 ### ❌ 误判 4：「想通过加新模型/调超参提高命中率」
 
 **真相**：大乐透 i.i.d. 随机，所有模型期望命中率 = random 基线。任何短期偏离都是采样噪声。
@@ -103,6 +109,20 @@ git log --since="7 days ago" --oneline -- docs/RUN_LOG.jsonl
 
 > 每次进入本 repo 完成反思后，**只在有新发现**时追加一条。无新发现就别污染。
 > 格式：`### [YYYY-MM-DD HH:MM 模型名] 一行总结` + 必要的 bullet。
+
+### [2026-05-27 Claude Sonnet 4.6] DB 长期未 commit 的根因与修复
+
+**发现**：`predict.yml` / `evaluate.yml` 的 "Commit charts + db" step 用了 `data/*.db`（glob），git-auto-commit-action@v5 静默忽略了这个 glob，导致 2026-04-21 后 DB 从未被 commit 进 git。每次 workflow 运行后：fetch_history 更新的数据 + predict/evaluate 的结果 + RUN_LOG.jsonl 全部随 runner 关闭丢失。
+
+**修复**：
+- 把两个 workflow 里的 `data/*.db` 改为 `data/daletou.db`
+- 本地补跑 fetch_history（26042→26057 +15 期）、evaluate 26043、predict 26058
+- LSTM/Transformer 完成了增量训练，checkpoint 更新
+- commit `0fda19f` push 到 main
+
+**影响评估**：26044-26057 共 14 期没有 predict 记录（那些期已经开奖，无法补预测，只能在 backtest walk-forward 里覆盖）。下次 backtest 接力时会把这 14 期纳入回测。
+
+**RUN_LOG 状态**：至今从未被 commit 进 git（docs/RUN_LOG.jsonl 不存在），reflect 系统没有数据。修复后下次 predict/evaluate workflow 运行，RUN_LOG.jsonl 才会首次入库。
 
 ### [2026-04-25 14:02 Claude] 主动停下：进入观察期
 
