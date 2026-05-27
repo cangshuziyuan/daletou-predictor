@@ -34,8 +34,12 @@ jobs:
                 || date -u -v-3H '+%Y-%m-%dT%H:%M:%SZ')
           echo "[hb] cutoff=$CUTOFF"
 
-          COUNT=$(gh api "/repos/$REPO/actions/workflows/backtest.yml/runs?per_page=10&created=>$CUTOFF" \
-                   --jq '.total_count // 0')
+          # 历史 bug：之前用 ?created=>$CUTOFF 作为 query 参数过滤，但 `>` 在 URL 里
+          # 未 percent-encode 时被 gh/GitHub API 忽略，导致 total_count 始终是全历史
+          # （5/26-5/27 一直返回 >= 1，永远走"心跳正常"分支，事件链断了无人救）。
+          # 修复：客户端过滤——取最近 10 条 runs，本地 jq 比较 created_at > cutoff。
+          COUNT=$(gh api "/repos/$REPO/actions/workflows/backtest.yml/runs?per_page=10" \
+                   --jq "[.workflow_runs[] | select(.created_at > \"$CUTOFF\")] | length")
           echo "[hb] 最近 3h 内 backtest run 数: $COUNT"
 
           if [ "$COUNT" -ge 1 ]; then
@@ -44,12 +48,22 @@ jobs:
           fi
 
           echo "[hb] ⚠️ backtest 心跳断链！立即 dispatch 复活"
-          gh workflow run backtest.yml \
-            --ref main \
-            -f start="-200" \
-            -f force=false \
-            -f models="all" \
-            -f auto_continue=true \
-            -f time_budget_seconds=3600 \
-            && echo "[hb] ✓ backtest.yml 已 dispatch，心跳恢复" \
-            || echo "[hb] ✗ dispatch 失败（权限问题？），请人工检查"
+          # 历史 bug：之前用 `|| echo "✗ dispatch 失败"` 吞掉了 dispatch 失败的 exit code，
+          # workflow 显示 success 但 backtest 实际没启动（5/26-5/27 表面上 6 次心跳全绿，
+          # 实际事件链已死）。修复：dispatch 失败 → step failure 可见，并打印 debug 信息。
+          if gh workflow run backtest.yml \
+              --ref main \
+              -f start="-200" \
+              -f force=false \
+              -f models="all" \
+              -f auto_continue=true \
+              -f time_budget_seconds=3600 2>&1; then
+            echo "[hb] ✓ backtest.yml 已 dispatch，心跳恢复"
+          else
+            echo "[hb] ✗ dispatch 失败！下面是 debug 信息："
+            echo "[hb] === gh auth status ==="
+            gh auth status 2>&1 || true
+            echo "[hb] === 最近 3 次 backtest run（验证 token 是否能读 runs） ==="
+            gh run list --workflow=backtest.yml --limit 3 2>&1 || true
+            exit 1
+          fi
