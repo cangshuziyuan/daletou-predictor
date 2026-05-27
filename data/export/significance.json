@@ -9,273 +9,273 @@
   "models": [
     {
       "model": "bayesian",
-      "issues": 1733,
-      "tickets": 1736,
+      "issues": 1900,
+      "tickets": 1903,
       "front": {
-        "hits": 1223,
-        "slots": 8680,
-        "observed": 0.140899,
+        "hits": 1332,
+        "slots": 9515,
+        "observed": 0.139989,
         "theoretical": 0.142857,
         "ci95": [
-          0.133738,
-          0.148377
+          0.133163,
+          0.147107
         ],
-        "p_value": 0.602054,
+        "p_value": 0.42407,
         "significant": false
       },
       "back": {
-        "hits": 567,
-        "slots": 3472,
-        "observed": 0.163306,
+        "hits": 618,
+        "slots": 3806,
+        "observed": 0.162375,
         "theoretical": 0.166667,
         "ci95": [
-          0.151384,
-          0.175973
+          0.151,
+          0.174431
         ],
-        "p_value": 0.595225,
+        "p_value": 0.477452,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.602, 后区 p=0.595)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.424, 后区 p=0.477)"
     },
     {
       "model": "ensemble",
-      "issues": 1434,
-      "tickets": 1437,
+      "issues": 1601,
+      "tickets": 1604,
       "front": {
-        "hits": 939,
-        "slots": 7185,
-        "observed": 0.130689,
+        "hits": 1052,
+        "slots": 8020,
+        "observed": 0.131172,
         "theoretical": 0.142857,
         "ci95": [
-          0.123092,
-          0.13868
+          0.12396,
+          0.138737
         ],
-        "p_value": 0.003203,
+        "p_value": 0.002785,
         "significant": true
       },
       "back": {
-        "hits": 476,
-        "slots": 2874,
-        "observed": 0.165623,
+        "hits": 542,
+        "slots": 3208,
+        "observed": 0.168953,
         "theoretical": 0.166667,
         "ci95": [
-          0.15248,
-          0.179658
+          0.156384,
+          0.182313
         ],
-        "p_value": 0.880641,
+        "p_value": 0.728278,
         "significant": false
       },
-      "verdict": "显著偏离随机：前区低于随机基线 (p=0.0032)"
+      "verdict": "显著偏离随机：前区低于随机基线 (p=0.00279)"
     },
     {
       "model": "frequency",
-      "issues": 1733,
-      "tickets": 1736,
+      "issues": 1900,
+      "tickets": 1903,
       "front": {
-        "hits": 1252,
-        "slots": 8680,
-        "observed": 0.14424,
+        "hits": 1368,
+        "slots": 9515,
+        "observed": 0.143773,
         "theoretical": 0.142857,
         "ci95": [
-          0.137006,
-          0.151788
+          0.136867,
+          0.150967
         ],
-        "p_value": 0.712813,
+        "p_value": 0.798492,
         "significant": false
       },
       "back": {
-        "hits": 559,
-        "slots": 3472,
-        "observed": 0.161002,
+        "hits": 611,
+        "slots": 3806,
+        "observed": 0.160536,
         "theoretical": 0.166667,
         "ci95": [
-          0.149153,
-          0.173601
+          0.149216,
+          0.17254
         ],
-        "p_value": 0.370474,
+        "p_value": 0.31017,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.713, 后区 p=0.37)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.798, 后区 p=0.31)"
     },
     {
       "model": "genetic",
-      "issues": 1733,
-      "tickets": 1736,
+      "issues": 1900,
+      "tickets": 1903,
       "front": {
-        "hits": 1395,
-        "slots": 8680,
-        "observed": 0.160714,
+        "hits": 1500,
+        "slots": 9515,
+        "observed": 0.157646,
         "theoretical": 0.142857,
         "ci95": [
-          0.153138,
-          0.16859
+          0.150462,
+          0.165106
         ],
-        "p_value": 2e-06,
+        "p_value": 3.7e-05,
         "significant": true
       },
       "back": {
-        "hits": 601,
-        "slots": 3472,
-        "observed": 0.173099,
+        "hits": 652,
+        "slots": 3806,
+        "observed": 0.171308,
         "theoretical": 0.166667,
         "ci95": [
-          0.160878,
-          0.186043
+          0.159671,
+          0.183609
         ],
-        "p_value": 0.309143,
+        "p_value": 0.442251,
         "significant": false
       },
-      "verdict": "显著偏离随机：前区高于随机基线 (p=1.99e-06)"
+      "verdict": "显著偏离随机：前区高于随机基线 (p=3.75e-05)"
     },
     {
       "model": "lstm",
-      "issues": 1434,
-      "tickets": 1437,
+      "issues": 1601,
+      "tickets": 1604,
       "front": {
-        "hits": 1015,
-        "slots": 7185,
-        "observed": 0.141267,
+        "hits": 1151,
+        "slots": 8020,
+        "observed": 0.143516,
         "theoretical": 0.142857,
         "ci95": [
-          0.133405,
-          0.149512
+          0.136014,
+          0.15136
         ],
-        "p_value": 0.700014,
+        "p_value": 0.866056,
         "significant": false
       },
       "back": {
-        "hits": 473,
-        "slots": 2874,
-        "observed": 0.164579,
+        "hits": 532,
+        "slots": 3208,
+        "observed": 0.165835,
         "theoretical": 0.166667,
         "ci95": [
-          0.151472,
-          0.178581
+          0.153366,
+          0.179104
         ],
-        "p_value": 0.763938,
+        "p_value": 0.899468,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.7, 后区 p=0.764)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.866, 后区 p=0.899)"
     },
     {
       "model": "markov",
-      "issues": 1733,
-      "tickets": 1736,
+      "issues": 1900,
+      "tickets": 1903,
       "front": {
-        "hits": 1256,
-        "slots": 8680,
-        "observed": 0.1447,
+        "hits": 1373,
+        "slots": 9515,
+        "observed": 0.144298,
         "theoretical": 0.142857,
         "ci95": [
-          0.137457,
-          0.152259
+          0.137381,
+          0.151503
         ],
-        "p_value": 0.623586,
+        "p_value": 0.687844,
         "significant": false
       },
       "back": {
-        "hits": 585,
-        "slots": 3472,
-        "observed": 0.168491,
+        "hits": 637,
+        "slots": 3806,
+        "observed": 0.167367,
         "theoretical": 0.166667,
         "ci95": [
-          0.156408,
-          0.181306
+          0.155844,
+          0.179561
         ],
-        "p_value": 0.773034,
+        "p_value": 0.907665,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.624, 后区 p=0.773)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.688, 后区 p=0.908)"
     },
     {
       "model": "random",
-      "issues": 1733,
-      "tickets": 1736,
+      "issues": 1900,
+      "tickets": 1903,
       "front": {
-        "hits": 1227,
-        "slots": 8680,
-        "observed": 0.141359,
+        "hits": 1349,
+        "slots": 9515,
+        "observed": 0.141776,
         "theoretical": 0.142857,
         "ci95": [
-          0.134189,
-          0.148847
+          0.134912,
+          0.14893
         ],
-        "p_value": 0.690074,
+        "p_value": 0.763158,
         "significant": false
       },
       "back": {
-        "hits": 603,
-        "slots": 3472,
-        "observed": 0.173675,
+        "hits": 669,
+        "slots": 3806,
+        "observed": 0.175775,
         "theoretical": 0.166667,
         "ci95": [
-          0.161437,
-          0.186635
+          0.164011,
+          0.188193
         ],
-        "p_value": 0.26782,
+        "p_value": 0.131606,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.69, 后区 p=0.268)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.763, 后区 p=0.132)"
     },
     {
       "model": "transformer",
-      "issues": 1434,
-      "tickets": 1437,
+      "issues": 1601,
+      "tickets": 1604,
       "front": {
-        "hits": 1137,
-        "slots": 7185,
-        "observed": 0.158246,
+        "hits": 1284,
+        "slots": 8020,
+        "observed": 0.1601,
         "theoretical": 0.142857,
         "ci95": [
-          0.14999,
-          0.166868
+          0.152237,
+          0.168288
         ],
-        "p_value": 0.000193,
+        "p_value": 1e-05,
         "significant": true
       },
       "back": {
-        "hits": 573,
-        "slots": 2874,
-        "observed": 0.199374,
+        "hits": 651,
+        "slots": 3208,
+        "observed": 0.20293,
         "theoretical": 0.166667,
         "ci95": [
-          0.185172,
-          0.214377
+          0.189372,
+          0.217199
         ],
-        "p_value": 3e-06,
+        "p_value": 0.0,
         "significant": true
       },
-      "verdict": "显著偏离随机：前区高于随机基线 (p=0.000193)；后区高于随机基线 (p=2.54e-06)"
+      "verdict": "显著偏离随机：前区高于随机基线 (p=1.02e-05)；后区高于随机基线 (p=3.56e-08)"
     },
     {
       "model": "xgboost",
-      "issues": 1434,
-      "tickets": 1437,
+      "issues": 1601,
+      "tickets": 1604,
       "front": {
-        "hits": 979,
-        "slots": 7185,
-        "observed": 0.136256,
+        "hits": 1088,
+        "slots": 8020,
+        "observed": 0.135661,
         "theoretical": 0.142857,
         "ci95": [
-          0.128518,
-          0.144383
+          0.128341,
+          0.14333
         ],
-        "p_value": 0.10982,
+        "p_value": 0.065519,
         "significant": false
       },
       "back": {
-        "hits": 477,
-        "slots": 2874,
-        "observed": 0.165971,
+        "hits": 528,
+        "slots": 3208,
+        "observed": 0.164589,
         "theoretical": 0.166667,
         "ci95": [
-          0.152816,
-          0.180017
+          0.152159,
+          0.17782
         ],
-        "p_value": 0.920261,
+        "p_value": 0.752129,
         "significant": false
       },
-      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.11, 后区 p=0.92)"
+      "verdict": "与随机基线在 α=0.05 下不可区分 (前区 p=0.0655, 后区 p=0.752)"
     }
   ]
 }
