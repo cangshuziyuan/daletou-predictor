@@ -156,6 +156,7 @@ jobs:
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
           WEWORK_WEBHOOK: ${{ secrets.WEWORK_WEBHOOK }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           BACKTEST_OUTCOME: ${{ steps.backtest.outcome }}
         run: python -m backend.src.tasks.notify_backtest
 
@@ -165,6 +166,7 @@ jobs:
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
           WEWORK_WEBHOOK: ${{ secrets.WEWORK_WEBHOOK }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python -m backend.src.tasks.check_freshness || true
 
       - name: Auto-dispatch (backtest 接力 + evaluate 窗口心跳)

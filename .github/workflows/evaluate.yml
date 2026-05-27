@@ -89,6 +89,7 @@ jobs:
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
           WEWORK_WEBHOOK: ${{ secrets.WEWORK_WEBHOOK }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python -m backend.src.tasks.evaluate --notify-only --issue ${{ steps.eval.outputs.evaluated_issue }}
 
       # --- 6) 导出 JSON 并 commit ---

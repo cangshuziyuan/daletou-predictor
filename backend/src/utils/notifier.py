@@ -1,10 +1,11 @@
 """
-通知模块 · 微信推送
+通知模块 · 多通道推送
 
 支持通道：
-- Server 酱 (sct.ftqq.com)：环境变量 SERVERCHAN_SENDKEY
-- 企业微信群机器人：环境变量 WEWORK_WEBHOOK
-- PushPlus：环境变量 PUSHPLUS_TOKEN
+- Server 酱 (sct.ftqq.com)：环境变量 SERVERCHAN_SENDKEY（免费 5 条/日）
+- 企业微信群机器人：环境变量 WEWORK_WEBHOOK（免费 20 条/分钟）
+- PushPlus：环境变量 PUSHPLUS_TOKEN（免费 5 条/日）
+- ntfy.sh：环境变量 NTFY_TOPIC（开源免费，每 topic 100 条/日；可选 NTFY_SERVER 自建）
 
 若均未配置，静默跳过（本地开发默认不发）
 """
@@ -91,6 +92,39 @@ def _send_pushplus(title: str, content: str, token: str) -> bool:
         return False
 
 
+def _send_ntfy(title: str, content: str, topic: str, server: str = "https://ntfy.sh") -> bool:
+    """
+    ntfy.sh 推送（开源免费，无需注册）
+
+    @param topic 用户自定义的频道名（公开字符串，知道名字就能订阅/推送，建议用难猜随机串）
+    @param server ntfy 服务器地址，默认 https://ntfy.sh，可改为自建实例
+    """
+    try:
+        # ntfy 支持 JSON body：topic 作字段，title/message 直接传，markdown 通过 header 启用
+        # 文档：https://docs.ntfy.sh/publish/#publish-as-json
+        resp = requests.post(
+            server.rstrip("/"),
+            json={
+                "topic": topic,
+                "title": title,
+                "message": content,
+                # priority 1-5，3 = default。预测/开奖通知用 default 即可，不打扰
+                "priority": 3,
+                # tags 在 iOS app 上显示为 emoji，便于扫一眼分类
+                "tags": ["bell"],
+                "markdown": True,
+            },
+            timeout=10,
+        )
+        ok = resp.status_code in (200, 201)
+        if not ok:
+            print(f"[notify] ntfy 失败 ({resp.status_code}): {resp.text[:200]}")
+        return ok
+    except Exception as e:
+        print(f"[notify] ntfy 异常: {e}")
+        return False
+
+
 def notify(title: str, content: str) -> List[str]:
     """
     广播通知到所有已配置的通道
@@ -112,6 +146,11 @@ def notify(title: str, content: str) -> List[str]:
     if token := os.environ.get("PUSHPLUS_TOKEN"):
         if _send_pushplus(title, content, token):
             channels.append("PushPlus")
+
+    if topic := os.environ.get("NTFY_TOPIC"):
+        server = os.environ.get("NTFY_SERVER", "https://ntfy.sh")
+        if _send_ntfy(title, content, topic, server):
+            channels.append("ntfy")
 
     if channels:
         print(f"[notify] 已推送到: {', '.join(channels)}")
