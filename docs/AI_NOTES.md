@@ -110,6 +110,26 @@ git log --since="7 days ago" --oneline -- docs/RUN_LOG.jsonl
 > 每次进入本 repo 完成反思后，**只在有新发现**时追加一条。无新发现就别污染。
 > 格式：`### [YYYY-MM-DD HH:MM 模型名] 一行总结` + 必要的 bullet。
 
+### [2026-05-27 15:18 Claude Opus 4.7 1M] heartbeat 过滤失效 + 吞错误：39h 静默断链根因
+
+**发现**：上一条修了 DB commit 后我以为事件链就稳了，结果用户 14:30 来问"为啥好多期没预测、workflow 没自动跑"。实测 5/25 23:42 backtest 跑通后到 5/27 15:00（39h）整条链断了。heartbeat 5/26-5/27 schedule 跑了 6 次全 success，每次只跑 1 秒——**两个隐藏 bug 叠加让表面绿、实际死**：
+
+1. **过滤失效**：`gh api "...?per_page=10&created=>$CUTOFF"` 里 `>` 没 percent-encode，GitHub API 忽略该过滤参数，`total_count` 返回全历史（这个 repo 是 1038）→ 永远 `>= 1` → 永远走"心跳正常 exit 0"分支，根本走不到 dispatch。
+2. **吞错误**：即使过滤修了进了 dispatch 分支，`gh workflow run ... && echo OK || echo FAIL` 里的 `|| echo` 会把 dispatch 失败的 exit code 改成 0 → step 显示 success 但 backtest 实际没启动。
+
+**修复**（commit `cb7e535`）：
+- 客户端过滤：取最近 10 条 runs，本地 jq 比 `created_at > cutoff`（不再依赖 GitHub API 的 query 过滤）
+- 显式 `if gh workflow run ...; then ... else exit 1 fi` + 打印 `gh auth status` / `gh run list` debug
+- 现在 heartbeat 失败会真的标红，不再静默躺尸
+
+**额外工具**（commit `7b4e4de`）：写了 `scripts/health-check.sh`——纯 curl + sqlite3，不依赖 gh CLI，30 秒看 C1-C6 六项指标。下次 AI 进 repo 时直接 `bash scripts/health-check.sh` 替代本文件里那段 gh CLI 巡检。
+
+**重新启动事件链**：`gh workflow run backtest.yml`（dispatch run id `26496769853`，in_progress 跑起来了）。今晚 21:30 后接力会自动 dispatch evaluate.yml 抓 26058 开奖。
+
+**给下次进来的我**：
+- 看到"workflow 表面 success 但实际数据没动"，第一反应应该查两个模式：① `|| echo` 吞错误 ② URL query 字符没 percent-encode。GitHub Actions 调度的可观测性陷阱藏在这两个地方最深。
+- evaluate.yml 和 backtest.yml 的 chain step 也有 `|| echo` 模式，但**没改**——因为 chain 是 nice-to-have（dispatch 失败不影响当次任务），不像 heartbeat 那样 dispatch 就是核心。这个判断对错由你定，别盲目复用我的取舍。
+
 ### [2026-05-27 Claude Sonnet 4.6] DB 长期未 commit 的根因与修复
 
 **发现**：`predict.yml` / `evaluate.yml` 的 "Commit charts + db" step 用了 `data/*.db`（glob），git-auto-commit-action@v5 静默忽略了这个 glob，导致 2026-04-21 后 DB 从未被 commit 进 git。每次 workflow 运行后：fetch_history 更新的数据 + predict/evaluate 的结果 + RUN_LOG.jsonl 全部随 runner 关闭丢失。
