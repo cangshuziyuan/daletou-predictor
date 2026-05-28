@@ -95,12 +95,14 @@ def main() -> int:
     pct = (processed / total * 100) if total else 0.0
 
     # 防刷屏：backtest 作为“心跳”时，即使 done=true 也会被反复 dispatch。
-    # 当本轮基本没有做任何计算（全部期号都命中幂等跳过）时，elapsed 会很短且 skipped_draws≈total。
-    # 这种“空转完成”不应推送通知，否则会每小时一条“回测完成”轰炸用户。
-    if done and total and skipped_draws >= total and elapsed <= 60:
+    # 旧逻辑只看 elapsed <= 60，但实测看到 elapsed=103s 仍是 99.9% 跳过（开奖日守 evaluate 窗口接力
+    # 时，每小时一轮 fetch + scan 就要 1-3min，根本到不了 60s 阈值）→ 每轮都推"回测完成" spam。
+    # 新逻辑用比例代替时间：skipped_draws / total >= 0.95 即视为空转（哪怕 elapsed 几分钟）。
+    # 真正补了新期号纳入回测时，skipped 比例会显著下降 → 正常推送。
+    if done and total and (skipped_draws / total) >= 0.95:
         print(
-            "[notify_backtest] done=true 但本轮全量幂等跳过（空转心跳），"
-            "为防刷屏跳过通知"
+            f"[notify_backtest] done=true 但本轮 {skipped_draws}/{total} "
+            f"({skipped_draws/total*100:.1f}%) 是幂等跳过（空转心跳），为防刷屏跳过通知"
         )
         # 仍然做新鲜度检查（如果数据断流要报警）
         try:
