@@ -108,6 +108,9 @@ jobs:
           WEWORK_WEBHOOK: ${{ secrets.WEWORK_WEBHOOK }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_AES_KEY: ${{ secrets.BARK_AES_KEY }}
+          BARK_AES_IV: ${{ secrets.BARK_AES_IV }}
         run: python -m backend.src.tasks.evaluate --notify-only --issue ${{ steps.eval.outputs.evaluated_issue }}
 
       # --- 7) 推送本期预测通知 ---
@@ -119,6 +122,9 @@ jobs:
           WEWORK_WEBHOOK: ${{ secrets.WEWORK_WEBHOOK }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_AES_KEY: ${{ secrets.BARK_AES_KEY }}
+          BARK_AES_IV: ${{ secrets.BARK_AES_IV }}
         run: python -m backend.src.tasks.predict --notify-only --issue ${{ steps.pred.outputs.issue }}
 
       # --- 8) 导出前端 JSON 并 commit ---

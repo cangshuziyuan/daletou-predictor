@@ -8,3 +8,4 @@ matplotlib>=3.8.0
 tqdm>=4.66.0
 python-dateutil>=2.8.2
 tenacity>=8.2.3
+# pycryptodome>=3.20.0  # 启用 Bark AES 端到端加密时再加，明文推送无需
